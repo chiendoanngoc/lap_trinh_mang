@@ -43,6 +43,17 @@ node InitHead(){
     return head;
 }
 
+int Search(node head, char username[]){
+    int position = 0;
+    for(node p = head; p != NULL; p = p->next){
+        if(strcmp(username,p->username)==0){
+            return position;
+        }
+        ++position;
+    }
+    return -1;
+}
+
 node readfile(node head)
 {
     FILE *f;
@@ -80,20 +91,33 @@ void menu()
     printf("Your choice (1-4, other to quit):");
 }
 
-void Register()
+void Register(node head)
 {
-
+    char username[50], password[10];
+        do
+        {
+            printf("Nhap username:");
+            scanf("%s",username);
+            printf("Nhap password:");
+            scanf("%s",password);
+            if (Search(head,username)==-1)
+            {
+                head = AddTail(head,username,password,1);
+                
+                break;
+            }
+            else printf("Username already existed!\n");
+        } while (1);
 }
 
 int main()
 {
     node head = InitHead();
     head = readfile(head);
-    print_account(head);
-    /*menu();
+    menu();
     int choice;
     scanf("%d",&choice);
-    if (choice == 1)*/
-
+    if (choice == 1)
+        Register(head);
     return 0;
 }
