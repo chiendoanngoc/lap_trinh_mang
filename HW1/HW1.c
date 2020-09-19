@@ -54,6 +54,21 @@ int Search(node head, char username[]){
     return -1;
 }
 
+int SignInCheck(node head,char username[],char password[]){
+    int i;
+    for(node p = head; p != NULL; p = p->next){
+        if(strcmp(username,p->username)==0){
+            if (strcmp(password,p->password)==0)
+            {
+                return 1;
+            }
+            else return 0;
+        }
+        ++i;
+    }
+    return -1;
+}
+
 node readfile(node head)
 {
     FILE *f;
@@ -71,6 +86,14 @@ node readfile(node head)
     
     fclose(f);
     return head;
+}
+
+void updatefile(char username[], char password[])
+{
+    FILE *f;
+    f = fopen("account.txt","a");
+    fprintf(f,"\n%s %s %d",username,password,1);
+    fclose(f);
 }
 
 void print_account(node head)
@@ -103,11 +126,25 @@ void Register(node head)
             if (Search(head,username)==-1)
             {
                 head = AddTail(head,username,password,1);
-                
+                updatefile(username,password);
                 break;
             }
             else printf("Username already existed!\n");
         } while (1);
+}
+
+void SignIn(node head){
+    char username_input[50], password_input[10];
+    int password_input_count=0;    
+    do {
+        printf("Nhap username:");
+        scanf("%s",username_input);
+        printf("Nhap password:");
+        scanf("%s",password_input);
+        password_input_count++;
+    } while ((password_input_count<3) && (SignInCheck(head,username_input,password_input)!=1));
+    if (SignInCheck(head,username_input,password_input)==1)
+        printf("Hello %s",username_input);
 }
 
 int main()
@@ -119,5 +156,8 @@ int main()
     scanf("%d",&choice);
     if (choice == 1)
         Register(head);
+    else if (choice == 2)
+        SignIn(head);
+    
     return 0;
 }
