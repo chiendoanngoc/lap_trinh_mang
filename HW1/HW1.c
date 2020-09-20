@@ -60,12 +60,18 @@ int SignInCheck(node head,char username[],char password[]){
         if(strcmp(username,p->username)==0){
             if (strcmp(password,p->password)==0)
             {
+                printf("Hello %s",username);
                 return 1;
             }
-            else return 0;
+            else
+            {
+                printf("Password is incorrect\n");
+                return 0;
+            }
         }
         ++i;
     }
+    printf("Cannot find account\n");
     return -1;
 }
 
@@ -86,6 +92,18 @@ node readfile(node head)
     
     fclose(f);
     return head;
+}
+
+void blockaccount(node head,char username[])
+{
+    FILE *f;
+    f = fopen("account.txt","w");
+    for(node p = head; p != NULL; p = p->next){
+        if(strcmp(username,p->username)==0)
+            p->status=0;
+        fprintf(f,"%s %s %d\n",p->username,p->password,p->status);
+    }
+    fclose(f);
 }
 
 void updatefile(char username[], char password[])
@@ -143,8 +161,9 @@ void SignIn(node head){
         scanf("%s",password_input);
         password_input_count++;
     } while ((password_input_count<3) && (SignInCheck(head,username_input,password_input)!=1));
-    if (SignInCheck(head,username_input,password_input)==1)
-        printf("Hello %s",username_input);
+    if (SignInCheck(head,username_input,password_input)!=1)
+        printf("Password is incorrect. Account is blocked\n");
+    blockaccount(head,username_input);
 }
 
 int main()
